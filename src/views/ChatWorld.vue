@@ -32,14 +32,29 @@
 </template>
 
 <script lang="ts" setup>
-import { World, Model, ThirdPersonCamera, Dummy, Setup, keyboard, Reticle } from 'lingo3d-vue'
+import { World, Model, ThirdPersonCamera, Dummy, Setup, Reticle } from 'lingo3d-vue'
 import { Dummy as dummy } from 'lingo3d'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter, Router } from 'vue-router'
+import { ElMessage } from 'element-plus'
 
 import useColyseus from '../hooks/useColyseus'
 import useKeyboard from '../hooks/useKeyboard'
-
 import ChatBoard from '../components/ChatBoard.vue'
+
+const route = useRoute()
+const router: Router = useRouter()
+
+onMounted(() => {
+  // 简单判断处理，防止用户通过 url 直接进入聊天室
+  if (!route.query.username) {
+    ElMessage.error('您没有权限，请检查是否正确登录!')
+
+    router.replace({
+      path: '/enter'
+    })
+  }
+})
 
 const dummyRef = ref<dummy | undefined>()
 // 定义当前播放动画，默认为 idle 站立

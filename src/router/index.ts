@@ -31,7 +31,21 @@ const router: Router = createRouter({
 
 // 全局前置路由守卫
 router.beforeEach((to, from, next) => {
-  next()
+  if (!to.query) {
+    router.replace({
+      path: '/enter'
+    })
+  }
+
+  if (!from.query) {
+    router.replace({
+      path: '/enter'
+    })
+  }
+
+  if (from.query) {
+    next()
+  }
 })
 
 export default router
