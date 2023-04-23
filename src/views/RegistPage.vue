@@ -1,12 +1,6 @@
 <template>
-  <!-- <h1>填入id、选择模型界面，验证id后跳转加载页面，加载完毕再跳转到world页面</h1>
-  <div class="enter-container">
-    <el-input v-model="username" placeholder="请输入您的ID..."></el-input>
-    <el-button type="success" @click="enterWorldPage">点击进入</el-button>
-  </div> -->
-
   <div class="container">
-    <div class="inner animate__animated animate__bounceInLeft animate__fast">
+    <div class="inner animate__animated animate__bounceInRight animate__fast">
       <div class="left-title">
         <div class="title-inner">
           <div class="title">Lingo3D</div>
@@ -17,15 +11,25 @@
       <div class="line"></div>
       <div class="right-form">
         <div class="form-inner">
-          <div class="title">登入</div>
+          <div class="title">注册</div>
           <div class="form">
             <ul>
+              <li>
+                <label for="userinput">昵称:</label>
+                <input
+                  v-model.trim="nickname"
+                  placeholder="请输入您的昵称..."
+                  @keydown.enter="regist"
+                  id="nickinput"
+                  type="text"
+                />
+              </li>
               <li>
                 <label for="userinput">账号:</label>
                 <input
                   v-model.trim="username"
                   placeholder="请输入您的账号..."
-                  @keydown.enter="enterWorldPage"
+                  @keydown.enter="regist"
                   id="userinput"
                   type="text"
                 />
@@ -35,14 +39,14 @@
                 <input
                   v-model.trim="password"
                   placeholder="请输入您的密码..."
-                  @keydown.enter="enterWorldPage"
+                  @keydown.enter="regist"
                   id="pwdinput"
                   type="password"
                 />
               </li>
               <li>
-                <button id="login" @click="login">确定</button>
-                <button id="regist" @click="enterRegistPage">注册</button>
+                <button id="login" @click="regist">确定</button>
+                <button id="login" @click="gotoEnterPage">去登录</button>
               </li>
             </ul>
           </div>
@@ -60,20 +64,19 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, Ref } from 'vue'
+import { ref, Ref } from 'vue'
 import { Router, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import useSocket from '../hooks/useSocket'
 import { useStore } from 'vuex'
-import { userLogin, fetchAnnouncements } from '../api'
+import { userRegist } from '../api'
 
-// 用户输入的 ID
+// 用户输入的昵称
+const nickname: Ref<string> = ref('')
+// 用户输入的账号
 const username: Ref<string> = ref('')
 // 用户输入的密码
 const password: Ref<string> = ref('')
-
-// 公告列表
-const announcementList: Ref<any[]> = ref([])
 
 // 路由
 const router: Router = useRouter()
@@ -82,78 +85,28 @@ const socket = useSocket()
 // vuex store
 const store = useStore()
 
-// 获取公告列表
-const getAnnouncementList = async () => {
-  const data = await fetchAnnouncements()
-  announcementList.value = data
+// 去登录
+const gotoEnterPage = () => {
+  router.push('/enter')
 }
 
-onMounted(() => {
-  getAnnouncementList()
-})
-
-// 确定按钮回调
-const login = async () => {
-  if (username.value === '' || password.value === '') {
-    return ElMessage({
-      message: '账号或密码不能为空！',
-      type: 'error'
-    })
+// 确定按钮的回调
+const regist = async () => {
+  if (nickname.value === '' || username.value === '' || password.value === '') {
+    return ElMessage.error('昵称、账号或密码不能为空!')
   }
 
   try {
-    const data = await userLogin({
+    const data = await userRegist({
+      nickname: nickname.value,
       username: username.value,
       password: password.value
     })
-
-    window.localStorage.setItem('userToken', data?.token)
-    window.localStorage.setItem('nickname', data?.nickname)
-
-    ElMessage.success('登录成功！欢迎回来')
-    enterWorldPage()
-  } catch (err: any) {
-    ElMessage.error('登录失败！请检查您的账号或密码')
-  }
-}
-
-// 跳转到注册页面
-const enterRegistPage = () => {
-  router.push('/regist')
-}
-
-// 跳转到聊天室，socket 事件监听
-const enterWorldPage = () => {
-  socket.emit('enter', window.localStorage.getItem('nickname'))
-
-  socket.on('userExist', (data) => {
     console.log(data)
-    ElMessage({
-      message: data.msg,
-      type: 'error'
-    })
-    return
-  })
-
-  socket.on('userEnter', (user) => {
-    router.push({
-      path: '/world',
-      query: {
-        username: window.localStorage.getItem('nickname')
-      }
-    })
-
-    socket.on('userCount', (count) => {
-      store.commit('setUserCount', count)
-    })
-
-    socket.on('userList', (list) => {
-      console.log(list)
-      store.commit('setUserList', list)
-    })
-
-    store.commit('addUser', user)
-  })
+    ElMessage.success('注册成功！您可以点击去登录按钮立即登录')
+  } catch (err: any) {
+    ElMessage.error('注册失败！昵称或账号已存在')
+  }
 }
 </script>
 
@@ -171,7 +124,7 @@ $decorative-color: #f68657;
 $secondary-decorative-color: #f6b352;
 
 .container {
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   user-select: none;
   background-color: $main-color;
@@ -238,12 +191,13 @@ $secondary-decorative-color: #f6b352;
 
         .form {
           li {
-            margin-top: 40px;
+            margin-top: 25px;
 
             label {
               color: $decorative-color;
             }
 
+            #nickinput,
             #userinput,
             #pwdinput {
               width: 100%;
@@ -260,12 +214,11 @@ $secondary-decorative-color: #f6b352;
             }
 
             &:last-child {
-              width: 80%;
-              margin: 40px auto;
+              width: 100%;
+              margin: 25px auto;
               @include flex(space-around, center, row);
 
-              #login,
-              #regist {
+              #login {
                 border: 3px solid $decorative-color;
                 padding: 7px 22px;
                 font-weight: bold;

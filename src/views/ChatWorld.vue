@@ -64,7 +64,8 @@ const animation = ref('idle')
 const NinjaAnimations = {
   idle: 'NinjaModel/idle.fbx',
   walking: 'NinjaModel/Walking.fbx',
-  jump: 'NinjaModel/Jump.fbx'
+  jump: 'NinjaModel/Jump.fbx',
+  running: 'NinjaModel/Running.fbx'
 }
 
 const dummyProxies = useColyseus(dummyRef)

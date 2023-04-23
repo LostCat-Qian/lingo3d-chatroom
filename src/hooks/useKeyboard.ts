@@ -27,11 +27,27 @@ const useKeyboard = (dummyRef: Ref<dummy | undefined>, animation: Ref<string>) =
       lineMove(dummy, 10, 'walking')
     }
 
+    // 奔跑动画 可能没用
+    if (pressed.has('w') && pressed.has('shift')) {
+      lineMove(dummy, -10, 'running')
+    }
+    if (pressed.has('s') && pressed.has('shift')) {
+      lineMove(dummy, 10, 'running')
+    }
+
     if (pressed.has('a')) {
       rightMove(dummy, 10, 'walking')
     }
     if (pressed.has('d')) {
       rightMove(dummy, -10, 'walking')
+    }
+
+    // 奔跑动画 可能没用
+    if (pressed.has('a') && pressed.has('shift')) {
+      rightMove(dummy, 10, 'running')
+    }
+    if (pressed.has('d') && pressed.has('shift')) {
+      rightMove(dummy, -10, 'running')
     }
   }
 

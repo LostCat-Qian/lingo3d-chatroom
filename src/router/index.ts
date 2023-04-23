@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, Router, RouteRecordRaw, NavigationGuard
 
 import EnterPage from '../views/EnterPage.vue'
 import ChatWorld from '../views/ChatWorld.vue'
+import RegistPage from '../views/RegistPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -12,6 +13,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/enter',
     name: 'enter',
     component: EnterPage
+  },
+  {
+    path: '/regist',
+    name: 'regist',
+    component: RegistPage
   },
   {
     path: '/world',

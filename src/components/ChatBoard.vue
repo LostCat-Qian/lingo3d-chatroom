@@ -28,6 +28,21 @@
     <hr />
     <div v-for="user in onlineUserList" class="nickname">用户: {{ user }} 在线</div>
   </div>
+
+  <div class="announcement-box">
+    <div class="content">
+      <div class="title">
+        <span>{{ announcement?.title || '--' }}</span>
+        <span>
+          {{ announcement?.date?.toString()?.slice(0, 19)?.split('T')[0] }}
+          {{ announcement?.date?.toString()?.slice(0, 19)?.split('T')[1] }}
+        </span>
+      </div>
+      <hr />
+      <div class="info">{{ announcement?.content || '--' }}</div>
+    </div>
+    <div class="tip-button">最新公告</div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -35,6 +50,7 @@ import { nextTick, onMounted, Ref, ref, watch } from 'vue'
 import { useRoute, RouteLocationNormalizedLoaded } from 'vue-router'
 import useSocket from '../hooks/useSocket'
 import { useStore } from 'vuex'
+import { fetchAnnouncements } from '../api'
 
 interface userChatInfo {
   userId: number
@@ -51,6 +67,8 @@ const onlineUserList: Ref<string[]> = ref([])
 const onlineUsers: Ref<number> = ref(0)
 // 定义目前聊天板内容
 const commentsList: Ref<Array<userChatInfo>> = ref([])
+// 定义公告信息
+const announcement: Ref<any> = ref({})
 // 使用路由参数
 const route: RouteLocationNormalizedLoaded = useRoute()
 const { username } = route.query
@@ -58,6 +76,12 @@ const { username } = route.query
 const store = useStore()
 
 onMounted(() => {
+  // 持续获取公告信息
+  getAnnouncementList()
+  setInterval(() => {
+    getAnnouncementList()
+  }, 10000)
+
   // 触发获取用户广播的消息的事件
   socket.on('sendServerMsg', (data: any) => {
     commentsList.value.push(data)
@@ -86,6 +110,13 @@ onMounted(() => {
   )
 })
 
+// 获取公告列表
+const getAnnouncementList = async () => {
+  const data = await fetchAnnouncements()
+  announcement.value = data.at(-1)
+}
+
+// 发送消息
 const sendMessage = () => {
   if (chatInfo.value === '' || chatInfo.value.trim() === '') {
     chatInfo.value = ''
@@ -117,6 +148,7 @@ const sendMessage = () => {
 .chat-board {
   width: 400px;
   height: 260px;
+  border-radius: 10px;
   background-color: #00000075;
   color: white;
 
@@ -159,5 +191,56 @@ const sendMessage = () => {
 
   z-index: 999;
   min-height: 25px;
+}
+
+.announcement-box {
+  position: fixed;
+  left: -370px;
+  top: 5%;
+  width: 400px;
+  height: 300px;
+  background-color: #00000075;
+  z-index: 999;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  transition: all 0.3s;
+  border-radius: 0 10px 10px 0;
+
+  &::after {
+    width: 100px;
+    height: 50px;
+    background-color: #000;
+    position: absolute;
+    right: 0;
+  }
+
+  &:hover {
+    left: 0;
+  }
+
+  .content {
+    width: 370px;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+
+    .title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .info {
+      margin-top: 10px;
+    }
+  }
+
+  .tip-button {
+    width: 30px;
+    height: 100%;
+    text-align: center;
+  }
 }
 </style>
