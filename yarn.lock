@@ -151,6 +151,11 @@
   resolved "https://registry.npmmirror.com/@types/node/-/node-18.11.5.tgz#1bc94cf2f9ab5fe33353bc7c79c797dcc5325bef"
   integrity sha512-3JRwhbjI+cHLAkUorhf8RnqUbFXajvzX4q6fMn5JwkgtuwfYtRQYI3u4V92vI6NJuTsbBQWWh3RZjFsuevyMGQ==
 
+"@types/recorder-js@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.npmmirror.com/@types/recorder-js/-/recorder-js-1.0.2.tgz#f6eaa52441e6b5aee0df2e9b2bdd7efec13bdd12"
+  integrity sha512-Q5dMNR4ASWK6NXlnfTcoqJqGeOnOwoSbnUCFd4yjt3xIFXIrk+AiGoznUyA+In+EyYTN7+7vJ+KSG8lnHlM78g==
+
 "@types/three@0.144.0":
   version "0.144.0"
   resolved "https://registry.npmmirror.com/@types/three/-/three-0.144.0.tgz#a154f40122dbc3668c5424a5373f3965c6564557"
@@ -870,6 +875,11 @@ immutable@^4.0.0:
   resolved "https://registry.npmmirror.com/immutable/-/immutable-4.1.0.tgz#f795787f0db780183307b9eb2091fcac1f6fafef"
   integrity sha512-oNkuqVTA8jqG1Q6c+UglTOD1xhC1BtjKI7XkCXRkZHrN5m18/XsnUp8Q89GkQO/z+0WjonSvl0FLhDYftp46nQ==
 
+inline-worker@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmmirror.com/inline-worker/-/inline-worker-1.1.0.tgz#55e96f54915a642b00872a2daa6fe832b424c98d"
+  integrity sha512-2nlxBGg5Uoop6IRco9wMzlAz62690ylokrUDg3IaCi9bJaq0HykbWlRtRXgvSKiBNmCBGXnOCFBkIFjaSGJocA==
+
 invariant@^2.2.0:
   version "2.2.4"
   resolved "https://registry.npmmirror.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
@@ -1270,6 +1280,18 @@ readdirp@~3.6.0:
   integrity sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==
   dependencies:
     picomatch "^2.2.1"
+
+recorder-core@^1.2.22030501:
+  version "1.2.23020100"
+  resolved "https://registry.npmmirror.com/recorder-core/-/recorder-core-1.2.23020100.tgz#135e1119902bb19027862a579c608b64d6497bac"
+  integrity sha512-HUxAPKmP0Q5Rd0Z57ufKGyJmUAB9cZPfe8vg4mckSDwx1JFJ+tln8i+jnGSCOjlKr6tC2UL4ifcWwa7w0jf5pA==
+
+recorder-js@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.npmmirror.com/recorder-js/-/recorder-js-1.0.7.tgz#5416f05c863d95c4b6eb4b2658ad6c1baf9f5677"
+  integrity sha512-jSG4GP1FUV9vGxY9lrvaI2yGq1OwfIvK8MF8qPndODhkwGx+iPBTG7ZhWK8YHt/zT/c88MmFZCntv9G7x1Exxg==
+  dependencies:
+    inline-worker "^1.1.0"
 
 resolve@^1.1.7, resolve@^1.22.1:
   version "1.22.1"

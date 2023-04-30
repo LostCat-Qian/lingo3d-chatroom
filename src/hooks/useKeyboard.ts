@@ -1,6 +1,7 @@
 import { Dummy as dummy } from 'lingo3d'
 import { keyboard } from 'lingo3d-vue'
 import { Ref } from 'vue'
+import { recStart, recStop } from '../utils/recorder'
 
 const useKeyboard = (dummyRef: Ref<dummy | undefined>, animation: Ref<string>) => {
   // 定义纵向方法
@@ -19,6 +20,12 @@ const useKeyboard = (dummyRef: Ref<dummy | undefined>, animation: Ref<string>) =
   keyboard.onKeyPress = (_, pressed) => {
     const dummy = dummyRef.value
     if (!dummy) return
+
+    
+    // if (pressed.has('v')) {
+    //   // 开始录制音频
+    //   recStart()
+    // }
 
     if (pressed.has('w')) {
       lineMove(dummy, -10, 'walking')
@@ -72,6 +79,11 @@ const useKeyboard = (dummyRef: Ref<dummy | undefined>, animation: Ref<string>) =
     if (!pressed.has('a') && !pressed.has('d')) {
       rightMove(dummy, 0, 'idle')
     }
+
+    // if (!pressed.has('v')) {
+    //   // 结束录制音频
+    //   recStop()
+    // }
   }
 }
 

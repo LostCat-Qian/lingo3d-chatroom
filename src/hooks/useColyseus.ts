@@ -3,12 +3,14 @@ import { createProxy } from 'lingo3d-vue'
 import { Dummy, loop } from 'lingo3d'
 import { reactive, Ref, watchEffect } from 'vue'
 import { ColyseusURL } from '../utils/URL'
+import { useStore } from 'vuex'
 
 // const ColyseusURL = 'ws://localhost:2567'
 
 export default (dummyRef: Ref<Dummy | undefined>) => {
   const client = new Client(ColyseusURL)
   const dummyProxies = reactive<Record<string, Dummy>>({})
+  const store = useStore()
 
   watchEffect(async (cleanup) => {
     const dummy = dummyRef.value
@@ -21,7 +23,9 @@ export default (dummyRef: Ref<Dummy | undefined>) => {
 
       const isMe = room.sessionId === sessionId
       if (isMe) {
-        // console.log('I am', sessionId)
+        // 提交用户自身sessionId到vuex
+        store.commit('setUserSessionId', sessionId)
+        // console.log('My sessionId: ', sessionId)
         return
       }
 

@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus'
+import { getToken } from './token'
 
 const http = axios.create({
   baseURL: '/api',
@@ -8,6 +9,11 @@ const http = axios.create({
 
 http.interceptors.request.use(
   (config: AxiosRequestConfig) => {
+    // 请求头携带token
+    const token = getToken()
+    if (token) {
+      config.headers!.authorization = `${token}`
+    }
     return config
   },
   (err: Error) => {

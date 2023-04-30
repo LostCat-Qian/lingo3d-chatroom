@@ -17,7 +17,7 @@
       <div class="line"></div>
       <div class="right-form">
         <div class="form-inner">
-          <div class="title">登入</div>
+          <div class="title">登录</div>
           <div class="form">
             <ul>
               <li>
@@ -31,7 +31,7 @@
                 />
               </li>
               <li>
-                <label for="pwdinput">登入密码:</label>
+                <label for="pwdinput">密码:</label>
                 <input
                   v-model.trim="password"
                   placeholder="请输入您的密码..."
@@ -39,6 +39,15 @@
                   id="pwdinput"
                   type="password"
                 />
+              </li>
+              <li>
+                <label for="pwdinput">选择模型:</label>
+                <select name="" id="" v-model="modelSrc">
+                  <option value="">请选择</option>
+                  <option value="NinjaModel/ninja.fbx">忍者</option>
+                  <option value="KannaModel/untitled.fbx">康纳</option>
+                  <option value="YusakiModel/untitled.fbx">宇崎</option>
+                </select>
               </li>
               <li>
                 <button id="login" @click="login">确定</button>
@@ -54,26 +63,26 @@
   <!-- 水印遮罩层 -->
   <div class="bodymask">
     <div v-for="item in 80" :key="item" style="line-height: 10px">
-      <p>作者：趴姿菜狗</p>
+      <p>作者：冉千</p>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, Ref } from 'vue'
+import { onMounted, ref, Ref, watch } from 'vue'
 import { Router, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import useSocket from '../hooks/useSocket'
 import { useStore } from 'vuex'
-import { userLogin, fetchAnnouncements } from '../api'
+import { userLogin, fetchCurrentMap } from '../api'
+import { setToken } from '../utils/token'
 
 // 用户输入的 ID
 const username: Ref<string> = ref('')
 // 用户输入的密码
 const password: Ref<string> = ref('')
-
-// 公告列表
-const announcementList: Ref<any[]> = ref([])
+// 用户选择的模型路径
+const modelSrc: Ref<string> = ref('NinjaModel/ninja.fbx')
 
 // 路由
 const router: Router = useRouter()
@@ -81,16 +90,6 @@ const router: Router = useRouter()
 const socket = useSocket()
 // vuex store
 const store = useStore()
-
-// 获取公告列表
-const getAnnouncementList = async () => {
-  const data = await fetchAnnouncements()
-  announcementList.value = data
-}
-
-onMounted(() => {
-  getAnnouncementList()
-})
 
 // 确定按钮回调
 const login = async () => {
@@ -109,18 +108,27 @@ const login = async () => {
 
     window.localStorage.setItem('userToken', data?.token)
     window.localStorage.setItem('nickname', data?.nickname)
-
-    ElMessage.success('登录成功！欢迎回来')
+    setToken(data?.token)
     enterWorldPage()
   } catch (err: any) {
     ElMessage.error('登录失败！请检查您的账号或密码')
   }
 }
 
+// 获取当前已激活的聊天地图场景
+const getCurrentMap = async () => {
+  const data = await fetchCurrentMap()
+  store.commit('setCurrentMap', data)
+}
+
 // 跳转到注册页面
 const enterRegistPage = () => {
   router.push('/regist')
 }
+
+onMounted(() => {
+  getCurrentMap()
+})
 
 // 跳转到聊天室，socket 事件监听
 const enterWorldPage = () => {
@@ -139,7 +147,10 @@ const enterWorldPage = () => {
     router.push({
       path: '/world',
       query: {
-        username: window.localStorage.getItem('nickname')
+        // 传递用户名
+        username: window.localStorage.getItem('nickname'),
+        // 传递用户所选择的模型路径
+        src: modelSrc.value
       }
     })
 
@@ -238,14 +249,15 @@ $secondary-decorative-color: #f6b352;
 
         .form {
           li {
-            margin-top: 40px;
+            margin-top: 30px;
 
             label {
               color: $decorative-color;
             }
 
             #userinput,
-            #pwdinput {
+            #pwdinput,
+            select {
               width: 100%;
               height: 40px;
               border-radius: 5px;
@@ -297,7 +309,7 @@ $secondary-decorative-color: #f6b352;
   left: 0;
   right: 0;
   bottom: 0;
-  opacity: 0.1;
+  opacity: 0.2;
   // 点击穿透事件
   pointer-events: none;
   display: flex;

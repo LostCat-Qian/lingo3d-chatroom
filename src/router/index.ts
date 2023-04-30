@@ -3,6 +3,8 @@ import { createRouter, createWebHistory, Router, RouteRecordRaw, NavigationGuard
 import EnterPage from '../views/EnterPage.vue'
 import ChatWorld from '../views/ChatWorld.vue'
 import RegistPage from '../views/RegistPage.vue'
+import { getToken } from '../utils/token'
+import { ElMessage } from 'element-plus'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -22,7 +24,10 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/world',
     name: 'world',
-    component: ChatWorld
+    component: ChatWorld,
+    meta: {
+      isAuthorization: true
+    }
   },
   {
     path: '/*',
@@ -37,19 +42,19 @@ const router: Router = createRouter({
 
 // 全局前置路由守卫
 router.beforeEach((to, from, next) => {
-  if (!to.query) {
-    router.replace({
-      path: '/enter'
-    })
-  }
+  const token = getToken()
 
-  if (!from.query) {
-    router.replace({
-      path: '/enter'
-    })
-  }
-
-  if (from.query) {
+  if (to.meta.isAuthorization) {
+    if (token) {
+      next()
+    } else {
+      ElMessage({
+        type: 'warning',
+        message: '您没有权限, 请登录以获取Token!'
+      })
+      router.push('/enter')
+    }
+  } else {
     next()
   }
 })

@@ -22,9 +22,16 @@ const userRegist = async (params: User) => {
   return data
 }
 
+// 获取公告消息
 const fetchAnnouncements = async () => {
   const { data } = await http.get('/announcement/getAnnouncements')
   return data
 }
 
-export { userLogin, userRegist, fetchAnnouncements }
+// 获取当前聊天室场景
+const fetchCurrentMap = async () => {
+  const { data } = await http.get('/map/getCurrentMap')
+  return data
+}
+
+export { userLogin, userRegist, fetchAnnouncements, fetchCurrentMap }

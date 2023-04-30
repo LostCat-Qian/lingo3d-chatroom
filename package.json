@@ -14,6 +14,8 @@
     "element-plus": "^2.2.19",
     "lingo3d-vue": "latest",
     "lodash": "^4.17.21",
+    "recorder-core": "^1.2.22030501",
+    "recorder-js": "^1.0.7",
     "sass": "^1.55.0",
     "socket.io": "^4.5.3",
     "socket.io-client": "^4.5.3",
@@ -22,6 +24,7 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
+    "@types/recorder-js": "^1.0.2",
     "@vitejs/plugin-vue": "^3.0.1",
     "autoprefixer": "^10.4.7",
     "postcss": "^8.4.14",
