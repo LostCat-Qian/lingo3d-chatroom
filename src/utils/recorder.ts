@@ -89,7 +89,11 @@ const TransferUpload = (number: number, blobOrNull: any | null, duration: any, b
     var reader = new FileReader()
     reader.readAsDataURL(blob)
     // socket.emit('audio', { blob, id: userStore.id })
-    socket.emit('audio', { blob, id: store.getters.getSessionId })
+    socket.emit('audio', {
+      blob,
+      id: store.getters.getSessionId,
+      roomName: store.getters.getRoomName
+    })
   }
 }
 export function recStart() {

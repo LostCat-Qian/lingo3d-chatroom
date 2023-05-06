@@ -3,14 +3,14 @@
   <Keyboard @key-up="handleKeyUp" @key-down="handleKeyDown" />
   <World>
     <!-- <Model :metalness-factor="2" :roughness-factor="0.2" :scale="200" src="lab.glb" physics="map" /> -->
-    <!-- <Model :metalness-factor="0" :roughness-factor="1" :scale="40" src="desert.glb" physics="map" /> -->
-    <Model
+    <Model :metalness-factor="0" :roughness-factor="1" :scale="40" src="desert.glb" physics="map" />
+    <!-- <Model
       :metalness-factor="currentMap.metalness"
       :roughness-factor="currentMap.roughness"
       :scale="currentMap.scale"
       :src="currentMap.src"
       physics="map"
-    />
+    /> -->
     <Dummy
       v-for="(dummyProxy, sessionId) in dummyProxies"
       :key="sessionId"
@@ -94,8 +94,9 @@ const NinjaAnimations = {
 const dummyProxies = useColyseus(dummyRef)
 
 // 语音播报
-socket.on('audio', ({ id, blob: buffer }) => {
-  if (id !== store.getters.getSessionId) {
+socket.on('audio', ({ id, blob: buffer, roomName }) => {
+  // 当发出语音的是自己时，并且只有自己所在的房间内，才进行语音播报
+  if (id !== store.getters.getSessionId && roomName === store.getters.getRoomName) {
     const blob = new Blob([buffer], { type: 'audio/wav' })
     const url = URL.createObjectURL(blob)
     console.log(url)

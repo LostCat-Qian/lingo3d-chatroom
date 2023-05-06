@@ -16,7 +16,10 @@ export default (dummyRef: Ref<Dummy | undefined>) => {
     const dummy = dummyRef.value
     if (!dummy) return
 
-    const room = await client.joinOrCreate<any>('my_room')
+    // 获取用户想要进入的房间名
+    const roomName = store.getters.getRoomName
+    // const room = await client.joinOrCreate<any>('my_room')
+    const room = await client.joinOrCreate<any>(roomName)
 
     room.state.players.onAdd = (player: any, sessionId: string) => {
       console.log('player joined', sessionId)

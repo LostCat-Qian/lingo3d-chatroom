@@ -22,13 +22,7 @@
             <ul>
               <li>
                 <label for="userinput">账号:</label>
-                <input
-                  v-model.trim="username"
-                  placeholder="请输入您的账号..."
-                  @keydown.enter="enterWorldPage"
-                  id="userinput"
-                  type="text"
-                />
+                <input v-model.trim="username" placeholder="请输入您的账号..." @keydown.enter="enterWorldPage" id="userinput" type="text" />
               </li>
               <li>
                 <label for="pwdinput">密码:</label>
@@ -50,6 +44,16 @@
                 </select>
               </li>
               <li>
+                <label for="pwdinput">您要加入的房间（进入大厅请留空）:</label>
+                <input
+                  v-model.trim="roomName"
+                  placeholder="请输入您要加入的房间号..."
+                  @keydown.enter="enterWorldPage"
+                  id="roomNameInput"
+                  type="text"
+                />
+              </li>
+              <li>
                 <button id="login" @click="login">确定</button>
                 <button id="regist" @click="enterRegistPage">注册</button>
               </li>
@@ -69,7 +73,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, Ref, watch } from 'vue'
+import { onMounted, reactive, ref, Ref, watch } from 'vue'
 import { Router, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import useSocket from '../hooks/useSocket'
@@ -83,11 +87,16 @@ const username: Ref<string> = ref('')
 const password: Ref<string> = ref('')
 // 用户选择的模型路径
 const modelSrc: Ref<string> = ref('NinjaModel/ninja.fbx')
+// 用户要进入的房间
+const roomName: Ref<string> = ref('')
 
 // 路由
 const router: Router = useRouter()
+
 // socket.io 实例
 const socket = useSocket()
+// let socket: any
+
 // vuex store
 const store = useStore()
 
@@ -108,8 +117,10 @@ const login = async () => {
 
     window.localStorage.setItem('userToken', data?.token)
     window.localStorage.setItem('nickname', data?.nickname)
+
     setToken(data?.token)
     enterWorldPage()
+    store.commit('setRoomName', roomName.value)
   } catch (err: any) {
     ElMessage.error('登录失败！请检查您的账号或密码')
   }
@@ -134,7 +145,7 @@ onMounted(() => {
 const enterWorldPage = () => {
   socket.emit('enter', window.localStorage.getItem('nickname'))
 
-  socket.on('userExist', (data) => {
+  socket.on('userExist', (data: any) => {
     console.log(data)
     ElMessage({
       message: data.msg,
@@ -143,7 +154,7 @@ const enterWorldPage = () => {
     return
   })
 
-  socket.on('userEnter', (user) => {
+  socket.on('userEnter', (user: any) => {
     router.push({
       path: '/world',
       query: {
@@ -154,11 +165,11 @@ const enterWorldPage = () => {
       }
     })
 
-    socket.on('userCount', (count) => {
+    socket.on('userCount', (count: any) => {
       store.commit('setUserCount', count)
     })
 
-    socket.on('userList', (list) => {
+    socket.on('userList', (list: any[]) => {
       console.log(list)
       store.commit('setUserList', list)
     })
@@ -249,7 +260,8 @@ $secondary-decorative-color: #f6b352;
 
         .form {
           li {
-            margin-top: 30px;
+            // margin-top: 30px;
+            margin-top: 10px;
 
             label {
               color: $decorative-color;
@@ -257,7 +269,8 @@ $secondary-decorative-color: #f6b352;
 
             #userinput,
             #pwdinput,
-            select {
+            select,
+            #roomNameInput {
               width: 100%;
               height: 40px;
               border-radius: 5px;

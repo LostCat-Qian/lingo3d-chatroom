@@ -58,8 +58,6 @@ interface userChatInfo {
   content: string
 }
 
-// 使用 socket
-const socket = useSocket()
 // 定义聊天板输入框数据
 const chatInfo: Ref<string> = ref('')
 // 定义在线人数
@@ -74,6 +72,8 @@ const route: RouteLocationNormalizedLoaded = useRoute()
 const { username } = route.query
 // 使用 vuex
 const store = useStore()
+// 使用 socket
+const socket = useSocket()
 
 onMounted(() => {
   // 持续获取公告信息
@@ -84,14 +84,19 @@ onMounted(() => {
 
   // 触发获取用户广播的消息的事件
   socket.on('sendServerMsg', (data: any) => {
-    commentsList.value.push(data)
-    // 使用 scrollIntoView 方法自动将滚动条滑倒最后一条消息的所在位置
-    const length: number = commentsList.value.length
-    // DOM 更新后再触发滚动
-    nextTick(() => {
-      const newMsg = document.getElementsByClassName('message')[length - 1]
-      newMsg.scrollIntoView()
-    })
+    // 如果消息是从当前房间的用户发出的，就进行广播
+    if (data.roomName === store.getters.getRoomName) {
+      commentsList.value.push(data)
+      // 使用 scrollIntoView 方法自动将滚动条滑倒最后一条消息的所在位置
+      const length: number = commentsList.value.length
+      // DOM 更新后再触发滚动
+      nextTick(() => {
+        const newMsg = document.getElementsByClassName('message')[length - 1]
+        newMsg.scrollIntoView()
+      })
+    } else {
+      return
+    }
   })
 
   // 使用多值侦听,侦听用户数量和用户列表
@@ -125,6 +130,7 @@ const sendMessage = () => {
 
   socket.emit('sendMessage', {
     userId: 1,
+    roomName: store.getters.getRoomName,
     username: username,
     content: chatInfo.value
   })

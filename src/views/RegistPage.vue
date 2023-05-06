@@ -80,8 +80,7 @@ const password: Ref<string> = ref('')
 
 // 路由
 const router: Router = useRouter()
-// socket.io 实例
-const socket = useSocket()
+
 // vuex store
 const store = useStore()
 
