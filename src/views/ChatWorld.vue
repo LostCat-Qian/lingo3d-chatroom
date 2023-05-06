@@ -3,14 +3,14 @@
   <Keyboard @key-up="handleKeyUp" @key-down="handleKeyDown" />
   <World>
     <!-- <Model :metalness-factor="2" :roughness-factor="0.2" :scale="200" src="lab.glb" physics="map" /> -->
-    <Model :metalness-factor="0" :roughness-factor="1" :scale="40" src="desert.glb" physics="map" />
-    <!-- <Model
+    <!-- <Model :metalness-factor="0" :roughness-factor="1" :scale="40" src="desert.glb" physics="map" /> -->
+    <Model
       :metalness-factor="currentMap.metalness"
       :roughness-factor="currentMap.roughness"
       :scale="currentMap.scale"
       :src="currentMap.src"
       physics="map"
-    /> -->
+    />
     <Dummy
       v-for="(dummyProxy, sessionId) in dummyProxies"
       :key="sessionId"
